@@ -140,7 +140,15 @@ extern struct security_operations *security_ops;
 /* SECMARK reference count */
 static atomic_t selinux_secmark_refcount = ATOMIC_INIT(0);
 
-int selinux_enforcing = 0;
+#ifdef CONFIG_SECURITY_SELINUX_DEVELOP
+int selinux_enforcing = 0; 
+
+static int __init enforcing_setup(char *str)
+{
+	selinux_enforcing = 0;
+	return 1;
+}
+__setup("enforcing=", enforcing_setup);
 
 #ifdef CONFIG_SECURITY_SELINUX_BOOTPARAM
 int selinux_enabled = CONFIG_SECURITY_SELINUX_BOOTPARAM_VALUE;
