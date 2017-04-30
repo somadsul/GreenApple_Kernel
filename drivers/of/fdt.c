@@ -677,6 +677,16 @@ int __init early_init_dt_scan_chosen(unsigned long node, const char *uname,
 
 	/* Retrieve command line */
 	p = of_get_flat_dt_prop(node, "bootargs", &l);
+<<<<<<< HEAD
+=======
+    p = add_cmdline(p, "androidboot.boot.veritymode=enforcing");
+	p = add_cmdline(p, "androidboot.boot.verifiedbootstate=green");
+	p = add_cmdline(p, "androidboot.boot.flash.locked=1");
+    p = add_cmdline(p, "androidboot.boot.ddrinfo=00000001");
+    p = del_cmdline(p, "androidboot.selinux=");
+	p = del_cmdline(p, "androidboot.security_mode=");
+    p = add_cmdline(p, "androidboot.selinux=permissive");
+>>>>>>> 9692a93e... cmdline: set selinux to permissive and remove security_mode
 	if (p != NULL && l > 0)
 		strlcpy(data, p, min((int)l, COMMAND_LINE_SIZE));
 
