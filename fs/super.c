@@ -588,7 +588,7 @@ struct super_block *get_super(struct block_device *bdev)
 
 	spin_lock(&sb_lock);
 rescan:
-	list_for_each_entry(sb, &super_blocks, s_list) {
+	list_for_each_entry_reverse(sb, &super_blocks, s_list) {
 		if (hlist_unhashed(&sb->s_instances))
 			continue;
 		if (sb->s_bdev == bdev) {
