@@ -1,0 +1,24 @@
+#
+# ADDITIONAL_DEFAULT_PROPERTIES
+#
+telephony.lteOnCdmaDevice=0
+rild.libpath=/system/lib/libsec-ril.so
+persist.security.ams.enforcing=3
+ro.secure=1
+ro.allow.mock.location=0
+ro.debuggable=0
+ro.adb.secure=1
+persist.sys.usb.config=mtp
+ro.zygote=zygote32
+dalvik.vm.image-dex2oat-Xms=64m
+dalvik.vm.image-dex2oat-Xmx=64m
+dalvik.vm.dex2oat-Xms=64m
+dalvik.vm.dex2oat-Xmx=512m
+ro.dalvik.vm.native.bridge=0
+debug.atrace.tags.enableflags=0
+#
+# BOOTIMAGE_BUILD_PROPERTIES
+#
+ro.bootimage.build.date=Fri Oct 21 16:11:59 KST 2016
+ro.bootimage.build.date.utc=1477033919
+ro.bootimage.build.fingerprint=samsung/k3gxx/k3g:6.0.1/MMB29K/G900HXXS1CPJA:user/test-keys

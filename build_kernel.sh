@@ -1,176 +1,120 @@
-#!/bin/bash 
+#!/bin/bash
+# kernel build script by SomAdsul V3.0 (optimized from apq8084 kernel source)
 
-# Build Script for compiling Liberty Kernel
+export MODEL=S7
+export ARCH=arm
+export BUILD_CROSS_COMPILE=/home/somadsul/toolchains/UBERTC4.9/bin/arm-eabi-
+export BUILD_JOB_NUMBER=`grep processor /proc/cpuinfo|wc -l`
+RDIR=$(pwd)
+OUTDIR=$RDIR/arch/$ARCH/boot
+DTSDIR=$RDIR/arch/$ARCH/boot/dts
+INCDIR=$RDIR/include
 
-# Developed by Griffin98
+if [ $MODEL = S7 ]
+then
+	KERNEL_DEFCONFIG=GreenApple_defconfig
+else if [ $MODEL = N7 ]
+then
+	KERNEL_DEFCONFIG=GreenApple_defconfig
+else if [ $MODEL = GraceUX ]
+then
+	KERNEL_DEFCONFIG=GreenApple_defconfig
+else [ $MODEL =Stock ]
+	KERNEL_DEFCONFIG=GreenApple_defconfig
+fi
+fi
+fi
 
-################### PREREQUISITES #####################
-#                                                     #
-# What you need installed to compile                  # 
-# gcc, gpp, cpp, c++, g++, lzma, lzop, ia32-libs flex,#
-# ccache                                              #
-# If on 64bit Linux, install gcc multilib             #
-#                                                     #
-#######################################################
-
-
-
-
-#######################################################
-# Variables
-#######################################################
-CCACHE_DIRR=~/.ccache/liberty-kernel
-OUTPUT_DIRR=$(pwd)/OUTPUT
-BUILD_JOB_NUMBER=`grep processor /proc/cpuinfo|wc -l`
-BOOTIMG_LOC=$(pwd)/liberty_tools/zip_files/boot.img
-BOOTIMG_LOC_BUILT=$(pwd)/liberty_tools/bootimg_tools/boot.img
-ZIMAGE_LOC=$(pwd)/arch/arm/boot/zImage
-DTIMAGE_LOC=$(pwd)/arch/arm/boot/dt.img
-ZIMAGE_LOC_BUILT=$(pwd)/liberty_tools/bootimg_tools/boot_img_files/kernel
-DTIMAGE_LOC_BUILT=$(pwd)/liberty_tools/bootimg_tools/boot_img_files/dt.img
-ZIPFILE_LOC=$(pwd)/liberty_tools/zip_files
-
-
-######################################################
-# Colors
-######################################################
-bldred=${txtbld}$(tput setaf 1) # red
-bldgrn=${txtbld}$(tput setaf 2) # green
-bldorg=${txtbld}$(tput setaf 3) # orange
-bldblu=${txtbld}$(tput setaf 4) # blue
-bldmag=${txtbld}$(tput setaf 5) # magenta
-bldcya=${txtbld}$(tput setaf 6) # cyan
-bldpink=${txtbld}$(tput setaf 200) # pink
-txtrst=$(tput sgr0) # Reset
-
-
-
-
-initialize()
-{ 
-    echo ""
-    echo "${bldorg}------> Initializing Kernel Build Script....... ${txtrst}" 
-    if which ccache >/dev/null; then
-       if [ ! -d "$CCACHE_DIRR" ]; then
-             mkdir $CCACHE_DIRR
-       fi      
-       export CCACHE_DIR="$CCACHE_DIRR"
-       export CC="ccache gcc"
-       export CXX="ccache g++"
-       export PATH="/usr/lib/ccache:$PATH"
-       ccache --max-size=20GB #Setting maximum size of ccache to 20GB
-    else
-         echo ""
-         echo "${bldred}Please install CCACHE first !! :( !!${txtrst}"
-         exit 1
-    fi   
-    
-    sleep 3;
-    
-    echo ""
-    read -p "${bldpink}Enter your device architectutre :${txtrst}" arch
-    export ARCH=$arch
-    
-    echo""
-    read -p "${bldpink}Enter your toolchain path :${txtrst}" cross_compile
-    export CROSS_COMPILE="$cross_compile"
+FUNC_CLEAN_DTB()
+{
+	if ! [ -d $RDIR/arch/$ARCH/boot/dts ] ; then
+		echo "no directory : "$RDIR/arch/$ARCH/boot/dts""
+	else
+		echo "rm files in : "$RDIR/arch/$ARCH/boot/dts/*.dtb""
+		rm $RDIR/arch/$ARCH/boot/dts/*.dtb
+		rm $RDIR/arch/$ARCH/boot/dtb/*.dtb
+		rm $RDIR/arch/$ARCH/boot/Image
+		rm $RDIR/arch/$ARCH/boot/boot.img-dtb
+		rm $RDIR/arch/$ARCH/boot/boot.img-zImage
+	fi
 }
 
-
-cleanup()
+FUNC_BUILD_KERNEL()
 {
-    echo ""
-    echo ""
-    echo "${bldorg}------> Please Wait While we perform little Housekeeping.......${txtrst}"
-    echo ""
-    make clean && make mrproper
-    rm -rf $OUTPUT_DIRR
-    rm -f $BOOTIMG_LOC
-    rm -f $ZIMAGE_LOC_BUILT
-    #rm -f $DTIMAGE_LOC_BUILT
-}
-
-
-building_zimage()
-{
-    echo ""
-    echo ""
-    echo "${bldorg}------> Building zImage.......${txtrst}"
-    echo ""
-    read -p "${bldpink}Enter your defconfig file name :${txtrst}" def_file
-    echo ""
-    make $def_file
-    echo ""
-    echo "${bldpink}Build Now Starting with ${BUILD_JOB_NUMBER} CPU Thread${txtrst}"
-    echo ""
-    time make -j$BUILD_JOB_NUMBER
-    if [ ! -e $ZIMAGE_LOC ]; then
+	echo ""
+        echo "=============================================="
+        echo "START : FUNC_BUILD_KERNEL"
+        echo "=============================================="
         echo ""
-        echo "${bldred}Failed to generate zImage see build log${txtrst}"
-        exit 1
-    else
-        echo ""
-        echo "${bldgrn}Building zImage Completed Successfully${txtrst}"
-    fi    
+        echo "build common config="$KERNEL_DEFCONFIG ""
+        echo "build variant config="$MODEL ""
+
+	FUNC_CLEAN_DTB
+
+	make -j$BUILD_JOB_NUMBER ARCH=$ARCH \
+			CROSS_COMPILE=$BUILD_CROSS_COMPILE \
+			$KERNEL_DEFCONFIG || exit -1
+
+	make -j$BUILD_JOB_NUMBER ARCH=$ARCH \
+			CROSS_COMPILE=$BUILD_CROSS_COMPILE || exit -1
+	
+	echo ""
+	echo "================================="
+	echo "END   : FUNC_BUILD_KERNEL"
+	echo "================================="
+	echo ""
 }
 
-
-generate_bootimage()
+FUNC_BUILD_RAMDISK()
 {
-  echo ""
-  echo ""
-  echo "${bldorg}------> Building boot.img.......${txtrst}"
-  mv $ZIMAGE_LOC $ZIMAGE_LOC_BUILT
-  cd liberty_tools/bootimg_tools
-  ./mkboot boot_img_files boot.img
-  cd ../..
+	mv $RDIR/arch/$ARCH/boot/zImage $RDIR/arch/$ARCH/boot/boot.img-zImage
+
+	case $MODEL in
+	S7)
+		rm -f $RDIR/ramdisk/S7/split_img/boot.img-zImage
+		mv -f $RDIR/arch/$ARCH/boot/boot.img-zImage $RDIR/ramdisk/S7/split_img/boot.img-zImage
+		cd $RDIR/ramdisk/S7
+		./repackimg.sh
+		echo SEANDROIDENFORCE >> image-new.img
+		;;
+	N7)
+		rm -f $RDIR/ramdisk/N7/split_img/boot.img-zImage
+		mv -f $RDIR/arch/$ARCH/boot/boot.img-zImage $RDIR/ramdisk/N7/split_img/boot.img-zImage
+		cd $RDIR/ramdisk/N7
+		./repackimg.sh
+		echo SEANDROIDENFORCE >> image-new.img
+		;;
+	GraceUX)
+		rm -f $RDIR/ramdisk/GraceUX/split_img/boot.img-zImage
+		mv -f $RDIR/arch/$ARCH/boot/boot.img-zImage $RDIR/ramdisk/GraceUX/split_img/boot.img-zImage
+		cd $RDIR/ramdisk/GraceUX
+		./repackimg.sh
+		echo SEANDROIDENFORCE >> image-new.img
+		;;
+	Stock)
+		rm -f $RDIR/ramdisk/SM-T700/split_img/boot.img-zImage
+		mv -f $RDIR/arch/$ARCH/boot/boot.img-zImage $RDIR/ramdisk/GraceUX/split_img/boot.img-zImage
+		cd $RDIR/ramdisk/GraceUX
+		./repackimg.sh
+		echo SEANDROIDENFORCE >> image-new.img
+		;;
+	*)
+		echo "Unknown device: $MODEL"
+		exit 1
+		;;
+	esac
 }
 
-flashable_zip()
-{
-  echo ""
-  echo ""
-  echo "${bldorg}------> Creating Flashable Zip.......${txtrst}"
-  mv $BOOTIMG_LOC_BUILT $BOOTIMG_LOC
-  cd  $ZIPFILE_LOC
-  zip -r Kernel.zip * >/dev/null
-  cd ../..
-  mkdir -p $OUTPUT_DIRR
-  mv $ZIPFILE_LOC/Kernel.zip $OUTPUT_DIRR
-  
-}
+# MAIN FUNCTION
+rm -rf ./build.log
+(
+    START_TIME=`date +%s`
 
+	FUNC_BUILD_KERNEL
+	FUNC_BUILD_RAMDISK
 
-main() #Main Function of Program
-{
-      initialize
-      cleanup
-      building_zimage
-      #building_dts
-      generate_bootimage
-	  flashable_zip
-	  echo ""
-	  echo ""
-	  echo ""
-	  echo "${bldred}Building Kernel Completed Successfully !!! :) ${txtrst}"
-}
-
-
-######################################################
-# Start of Script
-######################################################
-    rm -rf *.log
-    clear
-    echo ""
-    echo ""
-    echo "${bldblu}   _      _ _               _             _  __                    _ ${txtrst}" 
-    echo "${bldblu}  | |    (_) |             | |           | |/ /                   | |${txtrst}"
-    echo "${bldblu}  | |     _| |__   ___ _ __| |_ _   _    | ' / ___ _ __ _ __   ___| |${txtrst}"
-    echo "${bldblu}  | |    | | '_ \ / _ \ '__| __| | | |   |  < / _ \ '__| '_ \ / _ \ |${txtrst}"
-    echo "${bldblu}  | |____| | |_) |  __/ |  | |_| |_| |   | . \  __/ |  | | | |  __/ |${txtrst}"
-    echo "${bldblu}  |______|_|_.__/ \___|_|   \__|\__, |   |_|\_\___|_|  |_| |_|\___|_|${txtrst}"
-    echo "${bldblu}                                 __/ |                               ${txtrst}"
-    echo "${bldblu}                                |___/                                ${txtrst}"                      
-
-    main
-   
+    END_TIME=`date +%s`
+	
+    let "ELAPSED_TIME=$END_TIME-$START_TIME"
+    echo "Total compile time is $ELAPSED_TIME seconds"
+) 2>&1	 | tee -a ./build.log
