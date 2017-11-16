@@ -1,0 +1,106 @@
+
+==============================================
+START : FUNC_BUILD_KERNEL
+==============================================
+
+build common config=exynos5422-k3g_defconfig 
+build variant config=S7 
+rm files in : /home/somadsul/GreenApple/arch/arm/boot/dts/*.dtb
+rm: cannot remove '/home/somadsul/GreenApple/arch/arm/boot/dts/*.dtb': No such file or directory
+rm: cannot remove '/home/somadsul/GreenApple/arch/arm/boot/dtb/*.dtb': No such file or directory
+rm: cannot remove '/home/somadsul/GreenApple/arch/arm/boot/Image': No such file or directory
+rm: cannot remove '/home/somadsul/GreenApple/arch/arm/boot/boot.img-dtb': No such file or directory
+rm: cannot remove '/home/somadsul/GreenApple/arch/arm/boot/boot.img-zImage': No such file or directory
+arch/arm/mach-exynos/Kconfig:186:warning: choice value used outside its choice group
+arch/arm/mach-exynos/Kconfig:189:warning: choice value used outside its choice group
+arch/arm/mach-exynos/Kconfig:192:warning: choice value used outside its choice group
+drivers/nfc/Kconfig:100:warning: choice value used outside its choice group
+drivers/nfc/Kconfig:102:warning: choice value used outside its choice group
+drivers/nfc/Kconfig:110:warning: choice value used outside its choice group
+drivers/nfc/Kconfig:112:warning: choice value used outside its choice group
+drivers/nfc/Kconfig:114:warning: choice value used outside its choice group
+drivers/w1/Kconfig:34:warning: defaults for choice values not supported
+drivers/w1/Kconfig:40:warning: defaults for choice values not supported
+drivers/w1/Kconfig:46:warning: defaults for choice values not supported
+drivers/w1/Kconfig:52:warning: defaults for choice values not supported
+arch/arm/configs/exynos5422-k3g_defconfig:3883:warning: unexpected data
+#
+# configuration written to .config
+#
+scripts/kconfig/conf --silentoldconfig Kconfig
+arch/arm/mach-exynos/Kconfig:186:warning: choice value used outside its choice group
+arch/arm/mach-exynos/Kconfig:189:warning: choice value used outside its choice group
+arch/arm/mach-exynos/Kconfig:192:warning: choice value used outside its choice group
+drivers/nfc/Kconfig:100:warning: choice value used outside its choice group
+drivers/nfc/Kconfig:102:warning: choice value used outside its choice group
+drivers/nfc/Kconfig:110:warning: choice value used outside its choice group
+drivers/nfc/Kconfig:112:warning: choice value used outside its choice group
+drivers/nfc/Kconfig:114:warning: choice value used outside its choice group
+drivers/w1/Kconfig:34:warning: defaults for choice values not supported
+drivers/w1/Kconfig:40:warning: defaults for choice values not supported
+drivers/w1/Kconfig:46:warning: defaults for choice values not supported
+drivers/w1/Kconfig:52:warning: defaults for choice values not supported
+  CHK     include/generated/uapi/linux/version.h
+  HOSTCC  scripts/kallsyms
+  HOSTCC  scripts/conmakehash
+  HOSTCC  scripts/sortextable
+  CC      scripts/mod/empty.o
+  HOSTCC  scripts/mod/mk_elfconfig
+  HOSTCC  scripts/dtc/checks.o
+  HOSTCC  scripts/selinux/genheaders/genheaders
+  CC      scripts/mod/devicetable-offsets.s
+  HOSTCC  scripts/selinux/mdp/mdp
+  HOSTCC  scripts/dtc/data.o
+  HOSTCC  scripts/dtc/dtc-lexer.lex.o
+  HOSTCC  scripts/dtc/dtc-parser.tab.o
+  HOSTCC  scripts/dtc/dtc.o
+  HOSTCC  scripts/dtc/flattree.o
+  HOSTCC  scripts/dtc/fstree.o
+  HOSTCC  scripts/dtc/livetree.o
+  HOSTCC  scripts/dtc/srcpos.o
+  HOSTCC  scripts/dtc/treesource.o
+In file included from scripts/sortextable.c:162:0:
+scripts/sortextable.c: In function ‘main’:
+scripts/sortextable.h:158:3: warning: ‘relocs_size’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+   memset(relocs, 0, relocs_size);
+   ^
+scripts/sortextable.h:104:6: note: ‘relocs_size’ was declared here
+  int relocs_size;
+      ^
+In file included from scripts/sortextable.c:160:0:
+scripts/sortextable.h:158:3: warning: ‘relocs_size’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+   memset(relocs, 0, relocs_size);
+   ^
+scripts/sortextable.h:104:6: note: ‘relocs_size’ was declared here
+  int relocs_size;
+      ^
+  HOSTCC  scripts/dtc/util.o
+  HOSTLD  scripts/dtc/dtc
+  MKELF   scripts/mod/elfconfig.h
+  GEN     scripts/mod/devicetable-offsets.h
+  HOSTCC  scripts/mod/modpost.o
+  HOSTCC  scripts/mod/sumversion.o
+  HOSTCC  scripts/mod/file2alias.o
+  HOSTLD  scripts/mod/modpost
+  DTC     arch/arm/boot/dts/exynos5422-k3g_eur_open_10.dtb
+  CHK     include/generated/utsrelease.h
+  UPD     include/generated/utsrelease.h
+make[1]: 'include/generated/mach-types.h' is up to date.
+  CC      kernel/bounds.s
+In file included from kernel/bounds.c:9:0:
+include/linux/page-flags.h:118:2: error: redeclaration of enumerator 'PG_scfslower'
+  PG_scfslower,
+  ^
+include/linux/page-flags.h:113:2: note: previous definition of 'PG_scfslower' was here
+  PG_scfslower,
+  ^
+include/linux/page-flags.h:119:2: error: redeclaration of enumerator 'PG_nocache'
+  PG_nocache,
+  ^
+include/linux/page-flags.h:114:2: note: previous definition of 'PG_nocache' was here
+  PG_nocache,
+  ^
+/home/somadsul/GreenApple/./Kbuild:35: recipe for target 'kernel/bounds.s' failed
+make[1]: *** [kernel/bounds.s] Error 1
+Makefile:867: recipe for target 'prepare0' failed
+make: *** [prepare0] Error 2
