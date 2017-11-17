@@ -12,15 +12,15 @@ INCDIR=$RDIR/include
 
 if [ $MODEL = S7 ]
 then
-	KERNEL_DEFCONFIG=GreenApple_defconfig
+	KERNEL_DEFCONFIG=exynos5422-k3g_defconfig
 else if [ $MODEL = N7 ]
 then
-	KERNEL_DEFCONFIG=GreenApple_defconfig
+	KERNEL_DEFCONFIG=exynos5422-k3g_defconfig
 else if [ $MODEL = GraceUX ]
 then
-	KERNEL_DEFCONFIG=GreenApple_defconfig
+	KERNEL_DEFCONFIG=exynos5422-k3g_defconfig
 else [ $MODEL =Stock ]
-	KERNEL_DEFCONFIG=GreenApple_defconfig
+	KERNEL_DEFCONFIG=exynos5422-k3g_defconfig
 fi
 fi
 fi
