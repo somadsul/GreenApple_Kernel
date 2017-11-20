@@ -538,7 +538,6 @@ static unsigned long lowmem_scan(struct shrinker *s, struct shrink_control *sc)
 {
 	struct task_struct *tsk;
 	struct task_struct *selected[MANAGED_PROCESS_TYPES] = {NULL};
-	unsigned int uid = 0;
 	unsigned long rem = 0;
 	unsigned long ret = 0;
 

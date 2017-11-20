@@ -202,6 +202,7 @@ static bool check_update_reserved_asid(u64 asid, u64 newasid)
 
 static u64 new_context(struct mm_struct *mm, unsigned int cpu)
 {
+	static u32 cur_idx = 1;
 	u64 asid = atomic64_read(&mm->context.id);
 	u64 generation = atomic64_read(&asid_generation);
 

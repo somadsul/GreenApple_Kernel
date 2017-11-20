@@ -3,7 +3,7 @@
 
 export MODEL=S7
 export ARCH=arm
-export BUILD_CROSS_COMPILE=/home/somadsul/toolchains/UBERTC4.9/bin/arm-eabi-
+export BUILD_CROSS_COMPILE=/home/somadsul/toolchains/UBERTC4.8/bin/arm-eabi-
 export BUILD_JOB_NUMBER=`grep processor /proc/cpuinfo|wc -l`
 RDIR=$(pwd)
 OUTDIR=$RDIR/arch/$ARCH/boot
